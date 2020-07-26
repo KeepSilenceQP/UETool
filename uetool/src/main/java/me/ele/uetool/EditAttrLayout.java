@@ -75,13 +75,17 @@ public class EditAttrLayout extends CollectViewsLayout {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         targetElement = null;
-        if (dialog != null) {
-            dialog.dismiss();
-        }
+        dismissAttrsDialog();
     }
 
     public void setOnDragListener(OnDragListener onDragListener) {
         this.onDragListener = onDragListener;
+    }
+
+    public void dismissAttrsDialog() {
+        if (dialog != null) {
+            dialog.dismiss();
+        }
     }
 
     class MoveMode implements IMode {
@@ -162,7 +166,7 @@ public class EditAttrLayout extends CollectViewsLayout {
                         @Override
                         public void enableMove() {
                             mode = new MoveMode();
-                            dialog.dismiss();
+                            dismissAttrsDialog();
                         }
 
                         @Override
@@ -178,15 +182,17 @@ public class EditAttrLayout extends CollectViewsLayout {
                         @Override
                         public void selectView(Element element) {
                             targetElement = element;
-                            dialog.dismiss();
+                            dismissAttrsDialog();
                             dialog.show(targetElement);
                         }
                     });
                     dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
-                            targetElement.reset();
-                            invalidate();
+                            if (targetElement != null) {
+                                targetElement.reset();
+                                invalidate();
+                            }
                         }
                     });
                 }
